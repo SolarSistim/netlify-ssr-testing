@@ -1,0 +1,17 @@
+{
+  "products": {
+    "title": "Products - Netlify SSR Testing",
+    "description": "Explore our comprehensive range of products designed to meet your needs. Server-side rendered for optimal SEO performance.",
+    "keywords": "products, catalog, SSR, server-side rendering, Angular, Netlify"
+  },
+  "services": {
+    "title": "Services - Netlify SSR Testing",
+    "description": "Discover our professional services tailored to deliver exceptional results. Fully server-side rendered for search engine optimization.",
+    "keywords": "services, professional services, SSR, Angular services, Netlify deployment"
+  },
+  "about": {
+    "title": "About Us - Netlify SSR Testing",
+    "description": "Learn more about our mission and values. This page demonstrates Angular SSR capabilities on Netlify platform.",
+    "keywords": "about, company info, SSR testing, Angular SSR, Netlify platform"
+  }
+}
