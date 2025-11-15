@@ -12,6 +12,8 @@ export class AboutComponent implements OnInit {
   private metaService = inject(MetaService);
 
   ngOnInit(): void {
-    this.metaService.updateMetaTags('about');
+    // Subscribe to the metadata observable
+    // Angular SSR will wait for this HTTP call to complete before rendering
+    this.metaService.updateMetaTags('about').subscribe();
   }
 }

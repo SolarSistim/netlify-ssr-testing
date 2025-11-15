@@ -1,14 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Title, Meta as NgMeta } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 interface PageMetadata {
   title: string;
   description: string;
   keywords: string;
-}
-
-interface MetadataConfig {
-  [key: string]: PageMetadata;
 }
 
 @Injectable({
@@ -17,54 +15,38 @@ interface MetadataConfig {
 export class MetaService {
   private titleService = inject(Title);
   private metaService = inject(NgMeta);
+  private http = inject(HttpClient);
 
-  private metadata: MetadataConfig = {
-    products: {
-      title: 'Products - Netlify SSR Testing',
-      description: 'Explore our comprehensive range of products designed to meet your needs. Server-side rendered for optimal SEO performance.',
-      keywords: 'products, catalog, SSR, server-side rendering, Angular, Netlify'
-    },
-    services: {
-      title: 'Services - Netlify SSR Testing',
-      description: 'Discover our professional services tailored to deliver exceptional results. Fully server-side rendered for search engine optimization.',
-      keywords: 'services, professional services, SSR, Angular services, Netlify deployment'
-    },
-    about: {
-      title: 'About Us - Netlify SSR Testing',
-      description: 'Learn more about our mission and values. This page demonstrates Angular SSR capabilities on Netlify platform.',
-      keywords: 'about, company info, SSR testing, Angular SSR, Netlify platform'
-    }
-  };
+  updateMetaTags(page: string): Observable<PageMetadata> {
+    // Fetch metadata from Netlify Function
+    return this.http.get<PageMetadata>(`/.netlify/functions/page-metadata?page=${page}`).pipe(
+      tap((pageData) => {
+        // Set page title
+        this.titleService.setTitle(pageData.title);
 
-  updateMetaTags(page: string): void {
-    const pageData = this.metadata[page];
+        // Update meta description
+        this.metaService.updateTag({
+          name: 'description',
+          content: pageData.description
+        });
 
-    if (pageData) {
-      // Set page title
-      this.titleService.setTitle(pageData.title);
+        // Update meta keywords
+        this.metaService.updateTag({
+          name: 'keywords',
+          content: pageData.keywords
+        });
 
-      // Update meta description
-      this.metaService.updateTag({
-        name: 'description',
-        content: pageData.description
-      });
+        // Update Open Graph tags for social media
+        this.metaService.updateTag({
+          property: 'og:title',
+          content: pageData.title
+        });
 
-      // Update meta keywords
-      this.metaService.updateTag({
-        name: 'keywords',
-        content: pageData.keywords
-      });
-
-      // Update Open Graph tags for social media
-      this.metaService.updateTag({
-        property: 'og:title',
-        content: pageData.title
-      });
-
-      this.metaService.updateTag({
-        property: 'og:description',
-        content: pageData.description
-      });
-    }
+        this.metaService.updateTag({
+          property: 'og:description',
+          content: pageData.description
+        });
+      })
+    );
   }
 }
